@@ -20,7 +20,8 @@
       $tag.hide().fadeIn();
     },
     trimValue: false,
-    allowDuplicates: false
+    allowDuplicates: false,
+    removeOnBackspace: true
   };
 
   /**
@@ -359,7 +360,7 @@
         switch (event.which) {
           // BACKSPACE
           case 8:
-            if (doGetCaretPosition($input[0]) === 0) {
+            if (self.options.removeOnBackspace && doGetCaretPosition($input[0]) === 0) {
               var prev = $inputWrapper.prev();
               if (prev) {
                 self.remove(prev.data('item'));

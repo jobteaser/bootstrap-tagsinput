@@ -20,7 +20,8 @@
       $tag.hide().fadeIn();
     },
     trimValue: false,
-    allowDuplicates: false
+    allowDuplicates: false,
+    removeOnBackspace: true
   };
 
   /**
@@ -95,6 +96,14 @@
         }
       }
 
+      // raise beforeItemAdd arg
+      var beforeItemAddEvent = $.Event('beforeItemAdd', { item: item, cancel: false });
+      self.$element.trigger(beforeItemAddEvent);
+      if (beforeItemAddEvent.cancel)
+        return;
+
+      item = beforeItemAddEvent.item
+
       var itemValue = self.options.itemValue(item),
           itemText = self.options.itemText(item),
           tagClass = self.options.tagClass(item);
@@ -112,12 +121,6 @@
 
       // if length greater than limit
       if (self.items().toString().length + item.length + 1 > self.options.maxInputLength)
-        return;
-
-      // raise beforeItemAdd arg
-      var beforeItemAddEvent = $.Event('beforeItemAdd', { item: item, cancel: false });
-      self.$element.trigger(beforeItemAddEvent);
-      if (beforeItemAddEvent.cancel)
         return;
 
       // register item in internal array and map
@@ -357,7 +360,7 @@
         switch (event.which) {
           // BACKSPACE
           case 8:
-            if (doGetCaretPosition($input[0]) === 0) {
+            if (self.options.removeOnBackspace && doGetCaretPosition($input[0]) === 0) {
               var prev = $inputWrapper.prev();
               if (prev) {
                 self.remove(prev.data('item'));
